@@ -16,7 +16,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ClientLogin" />
-        <activity android:name=".Admin"></activity>
+        <activity android:name=".Admin" />
+        <activity android:name=".ClientMap"></activity>
     </application>
 
 </manifest>
