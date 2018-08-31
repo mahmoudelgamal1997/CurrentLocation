@@ -1,9 +1,36 @@
 package com.example2017.android.currentlocation;
 
+import android.graphics.Point;
 import android.location.Location;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Toast;
+
+
+
+import android.app.AlertDialog;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.support.v4.app.FragmentActivity;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
+
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.*;
+
 
 
 import com.firebase.geofire.GeoFire;
@@ -18,18 +45,28 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AdminMap extends FragmentActivity implements OnMapReadyCallback  {
 
     private GoogleMap mMap;
     Location mlocation;
+    private LatLng postion;
+    private Map<String,Marker> markers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +75,9 @@ public class AdminMap extends FragmentActivity implements OnMapReadyCallback  {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // setup markers
+        this.markers = new HashMap<String, Marker>();
     }
 
 
@@ -56,35 +96,20 @@ public class AdminMap extends FragmentActivity implements OnMapReadyCallback  {
 
 
         final DatabaseReference db= FirebaseDatabase.getInstance().getReference().child("CustomerRequest");
+        final DatabaseReference Users= FirebaseDatabase.getInstance().getReference().child("username");
+
         GeoFire geoFire=new GeoFire(db);
 
         GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(29.975051, 31.287913), 100);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
-            public void onKeyEntered(String key, final GeoLocation location) {
+            public void onKeyEntered(final String key, final GeoLocation location) {
                 // Add a marker in Sydney and move the camera
 
-               db.child(key).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
-                   @Override
-                   public void onDataChange(DataSnapshot dataSnapshot) {
-
-                String username=dataSnapshot.getValue(String.class);
-
-                       LatLng currentlocation = new LatLng(location.latitude, location.longitude);
-                       mMap.addMarker(new MarkerOptions().position(currentlocation).title(username));
-                       mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentlocation,10));
-
-
-
-
-                   }
-
-                   @Override
-                   public void onCancelled(DatabaseError databaseError) {
-
-                   }
-               });
+                // Add a new marker to the map
+                Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)));
+                markers.put(key, marker);
 
 
 
@@ -93,12 +118,32 @@ public class AdminMap extends FragmentActivity implements OnMapReadyCallback  {
             @Override
             public void onKeyExited(String key) {
                 System.out.println(String.format("Key %s is no longer in the search area", key));
+                // Remove any old marker
+                Marker marker = markers.get(key);
+                if (marker != null) {
+                    marker.remove();
+                    markers.remove(key);
+                }
+
             }
 
             @Override
-            public void onKeyMoved(String key, GeoLocation location) {
+            public void onKeyMoved(final String key, final GeoLocation location) {
                 System.out.println(String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+
+
+                // Move the marker
+                Marker marker = markers.get(key);
+                if (marker != null) {
+                   // mMap.animateCamera(marker,location.latitude, location.longitude);
+
+                    postion=new LatLng(location.latitude,location.longitude);
+
+                    animateMarker(marker, postion,true);
+                }
+
             }
+
 
             @Override
             public void onGeoQueryReady() {
@@ -118,4 +163,43 @@ public class AdminMap extends FragmentActivity implements OnMapReadyCallback  {
     }
 
 
+
+
+    // Animation handler for old APIs without animation support
+    public void animateMarker(final Marker marker, final LatLng toPosition,
+                              final boolean hideMarker) {
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+        Projection proj = mMap.getProjection();
+        Point startPoint = proj.toScreenLocation(marker.getPosition());
+        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+        final long duration = 500;
+
+        final Interpolator interpolator = new LinearInterpolator();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float t = interpolator.getInterpolation((float) elapsed
+                        / duration);
+                double lng = t * toPosition.longitude + (1 - t)
+                        * startLatLng.longitude;
+                double lat = t * toPosition.latitude + (1 - t)
+                        * startLatLng.latitude;
+                marker.setPosition(new LatLng(lat, lng));
+
+                if (t < 1.0) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16);
+                } else {
+                    if (hideMarker) {
+                        marker.setVisible(false);
+                    } else {
+                        marker.setVisible(true);
+                    }
+                }
+            }
+        });
     }
+}

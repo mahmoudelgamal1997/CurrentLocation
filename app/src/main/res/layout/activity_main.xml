@@ -10,40 +10,43 @@
     tools:context="com.example2017.android.currentlocation.MainActivity">
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="client"
+        android:background="#42A5F5"
+        android:layout_marginTop="10dp"
         android:id="@+id/button"
         android:onClick="client"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="229dp"
-        android:layout_marginEnd="229dp"
-        android:layout_marginTop="145dp" />
+        android:layout_below="@+id/button5"
+
+        />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="admin"
+        android:background="#42A5F5"
+        android:layout_marginTop="10dp"
         android:id="@+id/button2"
         android:onClick="admin"
-        android:layout_alignTop="@+id/button"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_below="@+id/button"
+       />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="sign up"
+        android:background="#42A5F5"
         android:id="@+id/button4"
         android:onClick="signUp"
         />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="log out "
-        android:layout_marginTop="50dp"
+        android:background="#42A5F5"
+        android:layout_marginTop="60dp"
         android:id="@+id/button5"
         android:onClick="logout"
         />

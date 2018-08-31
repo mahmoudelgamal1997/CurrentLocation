@@ -112,7 +112,6 @@ public class ClientMap extends FragmentActivity implements OnMapReadyCallback,Go
 
         userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference db= FirebaseDatabase.getInstance().getReference().child("CustomerRequest");
-        db.child(userId).child("username").setValue("bassam");
         GeoFire geoFire=new GeoFire(db);
         geoFire.setLocation(userId,new GeoLocation(location.getLatitude(),location.getLongitude()),new GeoFire.CompletionListener() {
             @Override

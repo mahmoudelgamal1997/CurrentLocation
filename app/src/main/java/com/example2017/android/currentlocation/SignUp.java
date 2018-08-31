@@ -17,6 +17,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUp extends AppCompatActivity {
 
@@ -75,27 +77,13 @@ public class SignUp extends AppCompatActivity {
                     @Override
                     public void onSuccess(AuthResult authResult) {
 
-                        FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
-                        UserProfileChangeRequest profile=new UserProfileChangeRequest.Builder()
-                                .setDisplayName(username).build();
+                        final FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+                        String userId= user.getUid();
+                        DatabaseReference name= FirebaseDatabase.getInstance().getReference().child("username");
+                        name.child(userId).setValue(username);
+                        Toast.makeText(SignUp.this, "تم التسجيل بنجاح ", Toast.LENGTH_SHORT).show();
 
 
-                        user.updateProfile(profile)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Toast.makeText(SignUp.this, "تم التسجيل بنجاح ", Toast.LENGTH_SHORT).show();
-                                        }}
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(SignUp.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-
-                                    }
-                                });
 
 
 
