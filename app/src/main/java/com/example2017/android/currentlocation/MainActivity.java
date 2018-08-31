@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -26,5 +28,14 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void signUp(View v){
+        Intent intent=new Intent(MainActivity.this,SignUp.class);
+        startActivity(intent);
+    }
+
+    public void logout(View v){
+        FirebaseAuth firebaseAuth=FirebaseAuth.getInstance();
+        firebaseAuth.signOut();
+    }
 
 }

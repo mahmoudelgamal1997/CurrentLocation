@@ -41,7 +41,12 @@ public class ClientLogin extends AppCompatActivity {
           public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
             FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
-             if (user!=null)
+              String name = user.getDisplayName();
+              String email = user.getEmail();
+              Toast.makeText(ClientLogin.this, name, Toast.LENGTH_SHORT).show();
+              Toast.makeText(ClientLogin.this, email, Toast.LENGTH_SHORT).show();
+
+              if (user!=null)
               {
 
                   Intent intent=new Intent(ClientLogin.this,ClientMap.class);

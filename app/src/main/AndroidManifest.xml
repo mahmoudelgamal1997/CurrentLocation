@@ -41,7 +41,8 @@
             android:label="@string/title_activity_client_map" />
         <activity
             android:name=".AdminMap"
-            android:label="@string/title_activity_admin_map"></activity>
+            android:label="@string/title_activity_admin_map" />
+        <activity android:name=".SignUp"></activity>
     </application>
 
 </manifest>

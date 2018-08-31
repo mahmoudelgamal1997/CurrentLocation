@@ -78,7 +78,7 @@ public class ClientMap extends FragmentActivity implements OnMapReadyCallback,Go
         locationRequest = new LocationRequest();
         locationRequest.setInterval(3000);
         locationRequest.setFastestInterval(1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -112,7 +112,7 @@ public class ClientMap extends FragmentActivity implements OnMapReadyCallback,Go
 
         userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference db= FirebaseDatabase.getInstance().getReference().child("CustomerRequest");
-
+        db.child(userId).child("username").setValue("bassam");
         GeoFire geoFire=new GeoFire(db);
         geoFire.setLocation(userId,new GeoLocation(location.getLatitude(),location.getLongitude()),new GeoFire.CompletionListener() {
             @Override
