@@ -20,15 +20,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class AdminMap extends FragmentActivity implements OnMapReadyCallback  {
 
     private GoogleMap mMap;
     Location mlocation;
-    String username=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,20 +54,37 @@ public class AdminMap extends FragmentActivity implements OnMapReadyCallback  {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        DatabaseReference db= FirebaseDatabase.getInstance().getReference().child("CustomerRequest");
+
+        final DatabaseReference db= FirebaseDatabase.getInstance().getReference().child("CustomerRequest");
         GeoFire geoFire=new GeoFire(db);
 
         GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(29.975051, 31.287913), 100);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
-            public void onKeyEntered(String key, GeoLocation location) {
+            public void onKeyEntered(String key, final GeoLocation location) {
                 // Add a marker in Sydney and move the camera
 
+               db.child(key).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
+                   @Override
+                   public void onDataChange(DataSnapshot dataSnapshot) {
 
-                LatLng currentlocation = new LatLng(location.latitude, location.longitude);
-                mMap.addMarker(new MarkerOptions().position(currentlocation).title(username));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentlocation,10));
+                String username=dataSnapshot.getValue(String.class);
+
+                       LatLng currentlocation = new LatLng(location.latitude, location.longitude);
+                       mMap.addMarker(new MarkerOptions().position(currentlocation).title(username));
+                       mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentlocation,10));
+
+
+
+
+                   }
+
+                   @Override
+                   public void onCancelled(DatabaseError databaseError) {
+
+                   }
+               });
 
 
 
