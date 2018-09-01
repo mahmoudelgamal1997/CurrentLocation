@@ -1,0 +1,13 @@
+<<<<<<< Original<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+<application>
+    <activity android:name="com.example2017.android.currentlocation.TimeMangement"></activity>
+</application>
+</manifest>
+
+    =======<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+<application>
+    <activity android:name="com.example2017.android.currentlocation.Date_Time"></activity>
+</application>
+</manifest>>>>>>>> Added

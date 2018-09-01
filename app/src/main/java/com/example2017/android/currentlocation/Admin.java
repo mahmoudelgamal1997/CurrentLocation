@@ -13,8 +13,16 @@ public class Admin extends AppCompatActivity {
         setContentView(R.layout.activity_admin);
     }
 
-    public void show (View v){
+    public void show (View v)
+    {
         Intent intent=new Intent(Admin.this,AdminMap.class);
         startActivity(intent);
     }
+
+    public void time (View v)
+    {
+        Intent intent=new Intent(Admin.this,TimeMangement.class);
+        startActivity(intent);
+    }
+
 }

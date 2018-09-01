@@ -2,4 +2,9 @@
     <string name="app_name">CurrentLocation</string>
     <string name="title_activity_client_map">Map</string>
     <string name="title_activity_admin_map">Map</string>
+
+    <string name="maps">Maps</string>
+    <string name="time">time</string>
+
+
 </resources>

@@ -33,29 +33,15 @@ import com.google.android.gms.maps.model.*;
 
 
 
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoQuery;
-import com.firebase.geofire.GeoQueryEventListener;
-import com.firebase.geofire.LocationCallback;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
+
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -118,12 +104,6 @@ public class AdminMap extends FragmentActivity implements OnMapReadyCallback  {
             @Override
             public void onKeyExited(String key) {
                 System.out.println(String.format("Key %s is no longer in the search area", key));
-                // Remove any old marker
-                Marker marker = markers.get(key);
-                if (marker != null) {
-                    marker.remove();
-                    markers.remove(key);
-                }
 
             }
 
@@ -139,7 +119,7 @@ public class AdminMap extends FragmentActivity implements OnMapReadyCallback  {
 
                     postion=new LatLng(location.latitude,location.longitude);
 
-                    animateMarker(marker, postion,true);
+                    animateMarker(marker, postion,false);
                 }
 
             }
